@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Moodle;
+use DB;
 class MoodleController extends Controller
 {
     //
     public function list()
     {
-        $list =  Moodle::where('id','4')->get();
-        return $list;
+        $students = DB::table( 'mdl_course_modules_completion' )
+        ->groupBy('userid')
+        ->join('mdl_user', 'mdl_course_modules_completion.userid', '=', 'mdl_user.id')
+        ->select('userid','firstname','middlename','lastname','email','phone2','address','city', \DB::raw('count(*) as count'))
+        ->get();
+        return $students;
     }
 }
